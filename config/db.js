@@ -150,7 +150,7 @@ async function setupDatabase() {
     if (admins.length === 0) {
       await db.query(`
         INSERT INTO users (name, email, password, role) VALUES 
-        ('Admin', 'admin@fashionhub.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lh', 'admin')
+        ('Admin', 'admin@fashionhub.com', '$2a$10$QiKmAySXQm5uDYUecU0/pev2Rhf8qlyuQQgwRWJDeoLHP3SrCTTR.', 'admin')
       `);
       console.log('✅ Admin user create ho gaya! (admin@fashionhub.com / admin123)');
     }
