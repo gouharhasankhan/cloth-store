@@ -1,0 +1,554 @@
+
+<%- include('../partials/header') %>
+
+<div class="container my-4">
+
+  <!-- BREADCRUMB -->
+
+  <nav aria-label="breadcrumb">
+
+    <ol class="breadcrumb">
+
+      <li class="breadcrumb-item">
+
+        <a href="/">Home</a>
+
+      </li>
+
+      <li class="breadcrumb-item">
+
+        <a href="/products">Products</a>
+
+      </li>
+
+      <li class="breadcrumb-item active">
+
+        <%= product.name %>
+
+      </li>
+
+    </ol>
+
+  </nav>
+
+  <!-- PRODUCT DETAIL -->
+
+  <div class="row g-4">
+
+    <!-- PRODUCT IMAGE -->
+
+    <div class="col-md-5">
+
+      <img
+        src="<%= product.image || '/images/default.jpg' %>"
+        class="img-fluid rounded shadow"
+        alt="<%= product.name %>"
+        style="max-height:500px; width:100%; object-fit:cover;"
+      >
+
+    </div>
+
+    <!-- PRODUCT INFO -->
+
+    <div class="col-md-7">
+
+      <!-- CATEGORY -->
+
+      <span class="badge bg-warning text-dark mb-2">
+
+        <%= product.category_name %>
+
+      </span>
+
+      <!-- PRODUCT NAME -->
+
+      <h2 class="fw-bold">
+
+        <%= product.name %>
+
+      </h2>
+
+      <!-- PRICE -->
+
+      <div class="d-flex align-items-center gap-3 mb-3">
+
+        <% if (product.discount_price) { %>
+
+          <h3 class="text-danger fw-bold mb-0">
+
+            ₹<%= product.discount_price %>
+
+          </h3>
+
+          <h5 class="text-muted text-decoration-line-through mb-0">
+
+            ₹<%= product.price %>
+
+          </h5>
+
+          <span class="badge bg-success">
+
+            <%= Math.round(((product.price - product.discount_price) / product.price) * 100) %>% OFF
+
+          </span>
+
+        <% } else { %>
+
+          <h3 class="fw-bold mb-0">
+
+            ₹<%= product.price %>
+
+          </h3>
+
+        <% } %>
+
+      </div>
+
+      <!-- DESCRIPTION -->
+
+      <p class="text-muted">
+
+        <%= product.description %>
+
+      </p>
+
+      <!-- STOCK -->
+
+      <% if (product.stock > 0) { %>
+
+        <span class="badge bg-success mb-3">
+
+          <i class="fas fa-check me-1"></i>
+
+          In Stock (<%= product.stock %> available)
+
+        </span>
+
+      <% } else { %>
+
+        <span class="badge bg-danger mb-3">
+
+          Out of Stock
+
+        </span>
+
+      <% } %>
+
+      <!-- ADD TO CART -->
+
+      <% if (product.stock > 0) { %>
+
+        <form action="/cart/add" method="POST">
+
+          <input
+            type="hidden"
+            name="product_id"
+            value="<%= product.id %>"
+          >
+
+          <!-- SIZE -->
+
+          <% if (product.sizesArr.length > 0) { %>
+
+            <div class="mb-3">
+
+              <label class="fw-bold mb-2">
+
+                Size:
+
+              </label>
+
+              <div class="d-flex gap-2 flex-wrap">
+
+                <% product.sizesArr.forEach((size, i) => { %>
+
+                  <div>
+
+                    <input
+                      type="radio"
+                      class="btn-check"
+                      name="size"
+                      id="size-<%= i %>"
+                      value="<%= size.trim() %>"
+                      <%= i === 0 ? 'checked' : '' %>
+                      required
+                    >
+
+                    <label
+                      class="btn btn-outline-dark"
+                      for="size-<%= i %>"
+                    >
+
+                      <%= size.trim() %>
+
+                    </label>
+
+                  </div>
+
+                <% }) %>
+
+              </div>
+
+            </div>
+
+          <% } %>
+
+          <!-- COLOR -->
+
+          <% if (product.colorsArr.length > 0) { %>
+
+            <div class="mb-3">
+
+              <label class="fw-bold mb-2">
+
+                Color:
+
+              </label>
+
+              <div class="d-flex gap-2 flex-wrap">
+
+                <% product.colorsArr.forEach((color, i) => { %>
+
+                  <div>
+
+                    <input
+                      type="radio"
+                      class="btn-check"
+                      name="color"
+                      id="color-<%= i %>"
+                      value="<%= color.trim() %>"
+                      <%= i === 0 ? 'checked' : '' %>
+                      required
+                    >
+
+                    <label
+                      class="btn btn-outline-secondary"
+                      for="color-<%= i %>"
+                    >
+
+                      <%= color.trim() %>
+
+                    </label>
+
+                  </div>
+
+                <% }) %>
+
+              </div>
+
+            </div>
+
+          <% } %>
+
+          <!-- QUANTITY -->
+
+          <div class="mb-3">
+
+            <label class="fw-bold mb-2">
+
+              Quantity:
+
+            </label>
+
+            <input
+              type="number"
+              name="quantity"
+              class="form-control"
+              value="1"
+              min="1"
+              max="<%= product.stock %>"
+              style="width:100px"
+            >
+
+          </div>
+
+          <!-- BUTTON -->
+
+          <% if (user) { %>
+
+            <button
+              type="submit"
+              class="btn btn-warning btn-lg px-4 me-2"
+            >
+
+              <i class="fas fa-cart-plus me-2"></i>
+
+              Add to Cart
+
+            </button>
+
+          <% } else { %>
+
+            <a
+              href="/auth/login"
+              class="btn btn-warning btn-lg px-4"
+            >
+
+              <i class="fas fa-sign-in-alt me-2"></i>
+
+              Login to Continue
+
+            </a>
+
+          <% } %>
+
+        </form>
+
+      <% } %>
+
+    </div>
+
+  </div>
+
+  <!-- REVIEWS -->
+
+  <div class="row mt-5">
+
+    <div class="col-md-8">
+
+      <h4 class="fw-bold mb-3">
+
+        Customer Reviews (<%= reviews.length %>)
+
+      </h4>
+
+      <!-- REVIEW FORM -->
+
+      <% if (user) { %>
+
+        <div class="card mb-4">
+
+          <div class="card-body">
+
+            <h6>
+
+              Write a Review
+
+            </h6>
+
+            <form
+              action="/products/<%= product.id %>/review"
+              method="POST"
+            >
+
+              <!-- RATING -->
+
+              <div class="mb-2">
+
+                <select
+                  name="rating"
+                  class="form-select"
+                  required
+                >
+
+                  <option value="">
+
+                    Select Rating
+
+                  </option>
+
+                  <option value="5">
+
+                    ⭐⭐⭐⭐⭐ (5)
+
+                  </option>
+
+                  <option value="4">
+
+                    ⭐⭐⭐⭐ (4)
+
+                  </option>
+
+                  <option value="3">
+
+                    ⭐⭐⭐ (3)
+
+                  </option>
+
+                  <option value="2">
+
+                    ⭐⭐ (2)
+
+                  </option>
+
+                  <option value="1">
+
+                    ⭐ (1)
+
+                  </option>
+
+                </select>
+
+              </div>
+
+              <!-- COMMENT -->
+
+              <div class="mb-2">
+
+                <textarea
+                  name="comment"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Share your experience..."
+                ></textarea>
+
+              </div>
+
+              <!-- BUTTON -->
+
+              <button
+                type="submit"
+                class="btn btn-dark"
+              >
+
+                Submit Review
+
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      <% } %>
+
+      <!-- NO REVIEWS -->
+
+      <% if (reviews.length === 0) { %>
+
+        <p class="text-muted">
+
+          No reviews yet.
+          Be the first to review this product!
+
+        </p>
+
+      <% } %>
+
+      <!-- REVIEWS LIST -->
+
+      <% reviews.forEach(review => { %>
+
+        <div class="card mb-3">
+
+          <div class="card-body">
+
+            <div class="d-flex justify-content-between">
+
+              <h6 class="fw-bold">
+
+                <%= review.user_name %>
+
+              </h6>
+
+              <small class="text-muted">
+
+                <%= new Date(review.created_at).toLocaleDateString('en-IN') %>
+
+              </small>
+
+            </div>
+
+            <!-- STARS -->
+
+            <div class="text-warning mb-2">
+
+              <% for(let i=0; i<review.rating; i++) { %>
+
+                <i class="fas fa-star"></i>
+
+              <% } %>
+
+            </div>
+
+            <!-- COMMENT -->
+
+            <p class="mb-0">
+
+              <%= review.comment %>
+
+            </p>
+
+          </div>
+
+        </div>
+
+      <% }) %>
+
+    </div>
+
+    <!-- RELATED PRODUCTS -->
+
+    <div class="col-md-4">
+
+      <h5 class="fw-bold mb-3">
+
+        Related Products
+
+      </h5>
+
+      <% related.forEach(p => { %>
+
+        <a
+          href="/products/<%= p.id %>"
+          class="text-decoration-none"
+        >
+
+          <div class="card mb-2 border-0 shadow-sm">
+
+            <div class="row g-0">
+
+              <!-- IMAGE -->
+
+              <div class="col-4">
+
+                <img
+                  src="<%= p.image || '/images/default.jpg' %>"
+                  class="img-fluid rounded-start h-100"
+                  style="object-fit:cover;"
+                  alt="<%= p.name %>"
+                >
+
+              </div>
+
+              <!-- INFO -->
+
+              <div class="col-8">
+
+                <div class="card-body py-2">
+
+                  <small
+                    class="fw-bold text-dark text-truncate d-block"
+                  >
+
+                    <%= p.name %>
+
+                  </small>
+
+                  <small class="text-danger fw-bold">
+
+                    ₹<%= p.discount_price || p.price %>
+
+                  </small>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </a>
+
+      <% }) %>
+
+    </div>
+
+  </div>
+
+</div>
+
+<%- include('../partials/footer') %>
+

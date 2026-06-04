@@ -1,0 +1,115 @@
+
+<%- include('../partials/header') %>
+
+<div class="container my-5">
+
+  <div class="row justify-content-center">
+
+    <div class="col-md-5">
+
+      <div class="card shadow-lg border-0 login-card">
+
+        <div class="card-header bg-dark text-white text-center py-4">
+
+          <h3 class="mb-0">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Login
+          </h3>
+
+        </div>
+
+        <div class="card-body p-4">
+
+          <form action="/auth/login" method="POST">
+
+            <!-- EMAIL -->
+
+            <div class="mb-3">
+
+              <label class="form-label fw-bold">
+                Email Address
+              </label>
+
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                placeholder="your@email.com"
+                required
+              >
+
+            </div>
+
+            <!-- PASSWORD -->
+
+            <div class="mb-3">
+
+              <label class="form-label fw-bold">
+                Password
+              </label>
+
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                placeholder="Enter your password"
+                required
+              >
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <button
+              type="submit"
+              class="btn btn-warning w-100 py-2 fw-bold">
+
+              Login
+
+            </button>
+
+          </form>
+
+          <hr>
+
+          <!-- REGISTER -->
+
+          <p class="text-center mb-0">
+
+            Don't have an account?
+
+            <a
+              href="/auth/register"
+              class="fw-bold text-dark text-decoration-none">
+
+              Register
+
+            </a>
+
+          </p>
+
+          <!-- DEMO -->
+
+          <p class="text-center mt-3 mb-0">
+
+            <small class="text-muted">
+
+              Demo Admin:
+              admin@fashionhub.com / admin123
+
+            </small>
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<%- include('../partials/footer') %>
+

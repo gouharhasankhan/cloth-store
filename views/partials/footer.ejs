@@ -1,0 +1,498 @@
+
+<style>
+
+/* =========================
+   PREMIUM FOOTER
+========================= */
+
+.premium-footer{
+
+  position:relative;
+
+  background:
+    linear-gradient(
+      135deg,
+      #020617,
+      #0f172a,
+      #111827
+    );
+
+  overflow:hidden;
+
+  padding:
+    90px 0 30px;
+
+  margin-top:100px;
+
+  border-top:
+    1px solid rgba(255,255,255,.08);
+}
+
+/* GLOW EFFECTS */
+
+.footer-glow{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(120px);
+  opacity:.12;
+}
+
+.footer-glow1{
+  width:300px;
+  height:300px;
+  background:#facc15;
+  top:-100px;
+  left:-100px;
+}
+
+.footer-glow2{
+  width:250px;
+  height:250px;
+  background:#3b82f6;
+  right:-80px;
+  bottom:-80px;
+}
+
+/* BRAND */
+
+.footer-brand h2{
+
+  color:white;
+
+  font-weight:800;
+
+  font-size:2rem;
+
+  margin-bottom:20px;
+}
+
+.footer-brand h2 i{
+
+  color:#facc15;
+
+  margin-right:10px;
+}
+
+.footer-brand p{
+
+  color:#94a3b8;
+
+  line-height:1.9;
+
+  max-width:340px;
+}
+
+/* SOCIALS */
+
+.footer-socials{
+
+  display:flex;
+
+  gap:15px;
+
+  margin-top:25px;
+}
+
+.footer-socials a{
+
+  width:48px;
+  height:48px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:16px;
+
+  background:
+    rgba(255,255,255,.05);
+
+  color:white;
+
+  font-size:18px;
+
+  text-decoration:none;
+
+  transition:.4s;
+
+  backdrop-filter:blur(10px);
+}
+
+.footer-socials a:hover{
+
+  transform:
+    translateY(-6px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #facc15,
+      #f59e0b
+    );
+
+  color:#111827;
+}
+
+/* LINKS */
+
+.footer-links h5{
+
+  color:white;
+
+  font-weight:700;
+
+  margin-bottom:25px;
+
+  position:relative;
+}
+
+.footer-links h5::after{
+
+  content:'';
+
+  position:absolute;
+
+  left:0;
+  bottom:-10px;
+
+  width:40px;
+  height:3px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #facc15,
+      #f59e0b
+    );
+}
+
+.footer-links ul{
+  padding:0;
+  margin:0;
+  list-style:none;
+}
+
+.footer-links ul li{
+
+  margin-bottom:16px;
+
+  color:#94a3b8;
+}
+
+.footer-links ul li a{
+
+  color:#94a3b8;
+
+  text-decoration:none;
+
+  transition:.35s;
+}
+
+.footer-links ul li a:hover{
+
+  color:#facc15;
+
+  padding-left:8px;
+}
+
+/* CONTACT */
+
+.contact-info li{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+}
+
+.contact-info i{
+
+  color:#facc15;
+
+  width:20px;
+}
+
+/* FOOTER BOTTOM */
+
+.footer-bottom{
+
+  margin-top:70px;
+
+  padding-top:30px;
+
+  border-top:
+    1px solid rgba(255,255,255,.08);
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  flex-wrap:wrap;
+
+  gap:20px;
+}
+
+.footer-bottom p{
+
+  color:#94a3b8;
+
+  margin:0;
+}
+
+.footer-payments{
+
+  display:flex;
+
+  gap:18px;
+
+  font-size:32px;
+
+  color:white;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  .premium-footer{
+
+    padding:
+      70px 0 20px;
+  }
+
+  .footer-brand{
+
+    text-align:center;
+  }
+
+  .footer-brand p{
+
+    margin:auto;
+  }
+
+  .footer-socials{
+
+    justify-content:center;
+  }
+
+  .footer-links{
+
+    text-align:center;
+  }
+
+  .footer-links h5::after{
+
+    left:50%;
+
+    transform:
+      translateX(-50%);
+  }
+
+  .contact-info li{
+
+    justify-content:center;
+  }
+
+  .footer-bottom{
+
+    text-align:center;
+
+    justify-content:center;
+  }
+
+}
+</style>
+
+<!-- PREMIUM FOOTER -->
+<footer class="premium-footer">
+
+  <div class="footer-glow footer-glow1"></div>
+  <div class="footer-glow footer-glow2"></div>
+
+  <div class="container position-relative">
+
+    <div class="row gy-5">
+
+      <!-- BRAND -->
+      <div class="col-lg-4 col-md-6">
+
+        <div class="footer-brand">
+
+          <h2>
+            <i class="fas fa-gem"></i>
+            <%= appName %>
+          </h2>
+
+          <p>
+            Premium fashion store crafted for modern lifestyle.
+            Explore luxury collections with next-level style.
+          </p>
+
+          <div class="footer-socials">
+
+            <a href="#">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="#">
+              <i class="fab fa-instagram"></i>
+            </a>
+
+            <a href="#">
+              <i class="fab fa-twitter"></i>
+            </a>
+
+            <a href="#">
+              <i class="fab fa-youtube"></i>
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="col-lg-2 col-md-6">
+
+        <div class="footer-links">
+
+          <h5>Quick Links</h5>
+
+          <ul>
+
+            <li>
+              <a href="/">
+                Home
+              </a>
+            </li>
+
+            <li>
+              <a href="/products">
+                Products
+              </a>
+            </li>
+
+            <li>
+              <a href="/auth/register">
+                Register
+              </a>
+            </li>
+
+            <li>
+              <a href="/auth/login">
+                Login
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="col-lg-3 col-md-6">
+
+        <div class="footer-links">
+
+          <h5>Categories</h5>
+
+          <ul>
+
+            <li>
+              <a href="/products?category=men">
+                Men's Wear
+              </a>
+            </li>
+
+            <li>
+              <a href="/products?category=women">
+                Women's Wear
+              </a>
+            </li>
+
+            <li>
+              <a href="/products?category=kids">
+                Kids Wear
+              </a>
+            </li>
+
+            <li>
+              <a href="/products?category=ethnic-wear">
+                Ethnic Wear
+              </a>
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+      <!-- CONTACT -->
+      <div class="col-lg-3 col-md-6">
+
+        <div class="footer-links">
+
+          <h5>Contact</h5>
+
+          <ul class="contact-info">
+
+            <li>
+              <i class="fas fa-phone-alt"></i>
+              +91 9457868875
+            </li>
+
+            <li>
+              <i class="fas fa-envelope"></i>
+              support@fashionhub.com
+            </li>
+
+            <li>
+              <i class="fas fa-map-marker-alt"></i>
+              India
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER BOTTOM -->
+
+    <div class="footer-bottom">
+
+      <p>
+        © <%= new Date().getFullYear() %> <%= appName %> .
+        All Rights Reserved.
+      </p>
+
+      <div class="footer-payments">
+
+        <i class="fab fa-cc-visa"></i>
+        <i class="fab fa-cc-mastercard"></i>
+        <i class="fab fa-cc-paypal"></i>
+        <i class="fab fa-google-pay"></i>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
+<script src="/js/main.js"></script>
+
+</body>
+</html>

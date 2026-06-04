@@ -1,0 +1,108 @@
+<%- include('../partials/header') %>
+
+<div class="container-fluid my-4">
+  <div class="row">
+    
+    <!-- ADMIN SIDEBAR -->
+    <div class="col-md-2">
+      <div class="list-group shadow-sm">
+        <a href="/admin/dashboard" class="list-group-item list-group-item-action active fw-bold">
+          <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <a href="/admin/products" class="list-group-item list-group-item-action">
+          <i class="fas fa-tshirt me-2"></i>Products
+        </a>
+        <a href="/admin/categories" class="list-group-item list-group-item-action">
+          <i class="fas fa-tags me-2"></i>Categories
+        </a>
+        <a href="/admin/orders" class="list-group-item list-group-item-action">
+          <i class="fas fa-box me-2"></i>Orders
+        </a>
+        <a href="/admin/users" class="list-group-item list-group-item-action">
+          <i class="fas fa-users me-2"></i>Users
+        </a>
+        <a href="/" class="list-group-item list-group-item-action text-primary">
+          <i class="fas fa-store me-2"></i>Website
+        </a>
+        <a href="/auth/logout" class="list-group-item list-group-item-action text-danger">
+          <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="col-md-10">
+      <h3 class="fw-bold mb-4">Admin Dashboard</h3>
+
+      <!-- STATS CARDS -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card bg-primary text-white shadow">
+            <div class="card-body text-center py-4">
+              <i class="fas fa-users fa-2x mb-2"></i>
+              <h2 class="fw-bold"><%= totalUsers %></h2>
+              <p class="mb-0">Total Users</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card bg-success text-white shadow">
+            <div class="card-body text-center py-4">
+              <i class="fas fa-tshirt fa-2x mb-2"></i>
+              <h2 class="fw-bold"><%= totalProducts %></h2>
+              <p class="mb-0">Products</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card bg-warning text-dark shadow">
+            <div class="card-body text-center py-4">
+              <i class="fas fa-box fa-2x mb-2"></i>
+              <h2 class="fw-bold"><%= totalOrders %></h2>
+              <p class="mb-0">Orders</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card bg-danger text-white shadow">
+            <div class="card-body text-center py-4">
+              <i class="fas fa-rupee-sign fa-2x mb-2"></i>
+              <h2 class="fw-bold"><%= parseFloat(totalRevenue).toFixed(0) %></h2>
+              <p class="mb-0">Revenue</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS -->
+      <div class="card shadow-sm">
+        <div class="card-header fw-bold bg-dark text-white">Recent Orders</div>
+        <div class="card-body">
+          <table class="table table-hover">
+            <thead>
+              <tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+            </thead>
+            <tbody>
+              <% recentOrders.forEach(order => { %>
+                <tr>
+                  <td>#<%= order.id %></td>
+                  <td><%= order.user_name %></td>
+                  <td>₹<%= order.total_amount %></td>
+                  <td>
+                    <span class="badge bg-<%= order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'danger' : 'warning text-dark' %>">
+                      <%= order.status %>
+                    </span>
+                  </td>
+                  <td><%= new Date(order.created_at).toLocaleDateString('hi-IN') %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <a href="/admin/orders" class="btn btn-dark btn-sm">Sab Orders Dekhein</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,210 @@
+<%- include('../partials/header') %>
+
+<div class="container-fluid my-4">
+  <div class="row">
+    <div class="col-md-2">
+      <%- include('./sidebar') %>
+    </div>
+    <div class="col-md-10">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold">Products Manage Karein</h3>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+          <i class="fas fa-plus me-1"></i>Naya Product Add Karein
+        </button>
+      </div>
+
+      <div class="table-responsive card shadow-sm">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(product => { %>
+              <tr>
+                <td><img src="<%= product.image || '/images/default.jpg' %>" style="width:50px; height:50px; object-fit:cover;" class="rounded"></td>
+                <td><%= product.name %></td>
+                <td><%= product.category_name || '-' %></td>
+                <td>
+                  <% if (product.discount_price) { %>
+                    <span class="text-danger">₹<%= product.discount_price %></span>
+                    <small class="text-decoration-line-through text-muted">₹<%= product.price %></small>
+                  <% } else { %>
+                    ₹<%= product.price %>
+                  <% } %>
+                </td>
+                <td><span class="badge bg-<%= product.stock > 0 ? 'success' : 'danger' %>"><%= product.stock %></span></td>
+                <td><%= product.is_featured ? '⭐' : '-' %></td>
+                <td>
+                  <button class="btn btn-sm btn-warning" onclick="editProduct(<%- JSON.stringify(product) %>)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form action="/admin/products/delete/<%= product.id %>?_method=DELETE" method="POST" class="d-inline" 
+                        onsubmit="return confirm('Delete karein?')">
+                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PRODUCT MODAL -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title">Naya Product Add Karein</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="/admin/products/add" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="fw-bold">Product Name *</label>
+              <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Category *</label>
+              <select name="category_id" class="form-select" required>
+                <option value="">Chunein</option>
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat.id %>"><%= cat.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="fw-bold">Description</label>
+              <textarea name="description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Price (₹) *</label>
+              <input type="number" name="price" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Discount Price (₹)</label>
+              <input type="number" name="discount_price" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Stock *</label>
+              <input type="number" name="stock" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Sizes (comma separated)</label>
+              <input type="text" name="sizes" class="form-control" placeholder="S,M,L,XL,XXL">
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Colors (comma separated)</label>
+              <input type="text" name="colors" class="form-control" placeholder="Red,Blue,Black">
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Product Image</label>
+              <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="is_featured" id="feat" value="1">
+                <label class="form-check-label fw-bold" for="feat">Featured Product?</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Product Add Karein</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title">Product Edit Karein</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="editForm" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="fw-bold">Product Name *</label>
+              <input type="text" name="name" id="editName" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Category</label>
+              <select name="category_id" id="editCategory" class="form-select">
+                <% categories.forEach(cat => { %>
+                  <option value="<%= cat.id %>"><%= cat.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="fw-bold">Description</label>
+              <textarea name="description" id="editDesc" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Price (₹)</label>
+              <input type="number" name="price" id="editPrice" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Discount Price (₹)</label>
+              <input type="number" name="discount_price" id="editDiscount" class="form-control">
+            </div>
+            <div class="col-md-4">
+              <label class="fw-bold">Stock</label>
+              <input type="number" name="stock" id="editStock" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Sizes</label>
+              <input type="text" name="sizes" id="editSizes" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">Colors</label>
+              <input type="text" name="colors" id="editColors" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="fw-bold">New Image (optional)</label>
+              <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="is_featured" id="editFeat" value="1">
+                <label class="form-check-label fw-bold" for="editFeat">Featured?</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-warning">Update Karein</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function editProduct(p) {
+  document.getElementById('editForm').action = `/admin/products/update/${p.id}`;
+  document.getElementById('editName').value = p.name;
+  document.getElementById('editDesc').value = p.description || '';
+  document.getElementById('editPrice').value = p.price;
+  document.getElementById('editDiscount').value = p.discount_price || '';
+  document.getElementById('editStock').value = p.stock;
+  document.getElementById('editSizes').value = p.sizes || '';
+  document.getElementById('editColors').value = p.colors || '';
+  document.getElementById('editCategory').value = p.category_id || '';
+  document.getElementById('editFeat').checked = p.is_featured == 1;
+  new bootstrap.Modal(document.getElementById('editProductModal')).show();
+}
+</script>
+
+<%- include('../partials/footer') %>

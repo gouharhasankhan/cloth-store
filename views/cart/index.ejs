@@ -1,0 +1,250 @@
+
+<%- include('../partials/header') %>
+
+<div class="container my-4">
+
+  <h2 class="fw-bold mb-4">
+    <i class="fas fa-shopping-cart me-2"></i>
+    My Cart
+  </h2>
+
+  <% if (items.length === 0) { %>
+
+    <!-- EMPTY CART -->
+
+    <div class="text-center py-5">
+
+      <i class="fas fa-shopping-cart fa-5x text-muted mb-3"></i>
+
+      <h4>Your cart is empty!</h4>
+
+      <a href="/products"
+         class="btn btn-warning mt-3">
+
+         Start Shopping
+
+      </a>
+
+    </div>
+
+  <% } else { %>
+
+    <div class="row g-4">
+
+      <!-- CART ITEMS -->
+
+      <div class="col-md-8">
+
+        <% items.forEach(item => { %>
+
+          <div class="card mb-3 shadow-sm border-0">
+
+            <div class="card-body">
+
+              <div class="row align-items-center">
+
+                <!-- PRODUCT IMAGE -->
+
+                <div class="col-3 col-md-2">
+
+                  <img
+                    src="<%= item.image || '/images/default.jpg' %>"
+                    class="img-fluid rounded"
+                    alt="<%= item.name %>"
+                  >
+
+                </div>
+
+                <!-- PRODUCT INFO -->
+
+                <div class="col-9 col-md-6">
+
+                  <h6 class="fw-bold mb-1">
+                    <%= item.name %>
+                  </h6>
+
+                  <% if (item.size) { %>
+
+                    <small class="text-muted">
+                      Size: <%= item.size %>
+                    </small>
+
+                  <% } %>
+
+                  <% if (item.color) { %>
+
+                    <small class="text-muted ms-2">
+                      Color: <%= item.color %>
+                    </small>
+
+                  <% } %>
+
+                  <div class="text-danger fw-bold mt-1">
+
+                    ₹<%= item.discount_price || item.price %>
+
+                  </div>
+
+                </div>
+
+                <!-- UPDATE / REMOVE -->
+
+                <div class="col-12 col-md-4 d-flex align-items-center gap-2 mt-2 mt-md-0">
+
+                  <!-- UPDATE -->
+
+                  <form
+                    action="/cart/update"
+                    method="POST"
+                    class="d-flex align-items-center gap-2"
+                  >
+
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="<%= item.id %>"
+                    >
+
+                    <input
+                      type="number"
+                      name="quantity"
+                      value="<%= item.quantity %>"
+                      min="0"
+                      max="<%= item.stock %>"
+                      class="form-control"
+                      style="width:70px"
+                    >
+
+                    <button class="btn btn-sm btn-outline-dark">
+
+                      Update
+
+                    </button>
+
+                  </form>
+
+                  <!-- REMOVE -->
+
+                  <form
+                    action="/cart/remove/<%= item.id %>?_method=DELETE"
+                    method="POST"
+                  >
+
+                    <button class="btn btn-sm btn-outline-danger">
+
+                      <i class="fas fa-trash"></i>
+
+                    </button>
+
+                  </form>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        <% }) %>
+
+      </div>
+
+      <!-- ORDER SUMMARY -->
+
+      <div class="col-md-4">
+
+        <div class="card shadow border-0">
+
+          <div class="card-header bg-dark text-white fw-bold">
+
+            Order Summary
+
+          </div>
+
+          <div class="card-body">
+
+            <!-- SUBTOTAL -->
+
+            <div class="d-flex justify-content-between mb-2">
+
+              <span>
+                Subtotal (<%= items.length %> items)
+              </span>
+
+              <span>
+                ₹<%= total.toFixed(2) %>
+              </span>
+
+            </div>
+
+            <!-- DELIVERY -->
+
+            <div class="d-flex justify-content-between mb-2">
+
+              <span>
+                Delivery Charge
+              </span>
+
+              <span class="text-success">
+
+                <%= total >= 500 ? 'Free' : '₹50' %>
+
+              </span>
+
+            </div>
+
+            <hr>
+
+            <!-- TOTAL -->
+
+            <div class="d-flex justify-content-between fw-bold fs-5">
+
+              <span>Total</span>
+
+              <span>
+
+                ₹<%= (total + (total >= 500 ? 0 : 50)).toFixed(2) %>
+
+              </span>
+
+            </div>
+
+            <!-- CHECKOUT -->
+
+            <a
+              href="/orders/checkout"
+              class="btn btn-warning w-100 mt-3 py-2 fw-bold"
+            >
+
+              <i class="fas fa-credit-card me-2"></i>
+
+              Proceed to Checkout
+
+            </a>
+
+            <!-- CONTINUE SHOPPING -->
+
+            <a
+              href="/products"
+              class="btn btn-outline-secondary w-100 mt-2"
+            >
+
+              Continue Shopping
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  <% } %>
+
+</div>
+
+<%- include('../partials/footer') %>
+
