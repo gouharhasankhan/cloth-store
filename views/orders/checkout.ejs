@@ -121,12 +121,12 @@
 
           <div class="d-flex justify-content-between">
             <span>Delivery</span>
-            <span class="text-success"><%= total >= 500 ? 'Free' : '₹50' %></span>
+            <span class="text-success"><%= total >= 2 ? 'Free' : '₹50' %></span>
           </div>
 
           <div class="d-flex justify-content-between fw-bold fs-5 mt-2">
             <span>Total</span>
-            <span class="text-danger">₹<%= (total + (total >= 500 ? 0 : 50)).toFixed(2) %></span>
+            <span class="text-danger">₹<%= (total + (total >= 2 ? 0 : 50)).toFixed(2) %></span>
           </div>
 
         </div>
@@ -141,7 +141,7 @@
 
 <script>
   const RAZORPAY_KEY_ID = '<%= razorpayKeyId %>';
-  const TOTAL_AMOUNT = <%= (total + (total >= 500 ? 0 : 50)).toFixed(2) %>;
+  const TOTAL_AMOUNT = <%= (total + (total >= 2 ? 0 : 50)).toFixed(2) %>;
 
   // Payment method toggle
   document.querySelectorAll('input[name="payment_method"]').forEach(radio => {

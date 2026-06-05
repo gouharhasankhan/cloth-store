@@ -188,7 +188,7 @@
 
               <span class="text-success">
 
-                <%= total >= 500 ? 'Free' : '₹50' %>
+                <%= total >= 2 ? 'Free' : '₹50' %>
 
               </span>
 
@@ -204,7 +204,7 @@
 
               <span>
 
-                ₹<%= (total + (total >= 500 ? 0 : 50)).toFixed(2) %>
+                ₹<%= (total + (total >= 2 ? 0 : 50)).toFixed(2) %>
 
               </span>
 
