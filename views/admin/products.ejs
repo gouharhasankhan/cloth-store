@@ -37,7 +37,7 @@
                 <td><span class="badge bg-<%= product.stock > 0 ? 'success' : 'danger' %>"><%= product.stock %></span></td>
                 <td><%= product.is_featured ? '⭐' : '-' %></td>
                 <td>
-                  <button class="btn btn-sm btn-warning" onclick="editProduct(<%- JSON.stringify(product) %>)">
+                  <button class="btn btn-sm btn-warning" onclick="editProduct(<%= JSON.stringify(product) %>)">
                     <i class="fas fa-edit"></i>
                   </button>
                   <form action="/admin/products/delete/<%= product.id %>?_method=DELETE" method="POST" class="d-inline" 

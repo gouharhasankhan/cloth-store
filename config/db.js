@@ -143,7 +143,7 @@ async function setupDatabase() {
       )
     `);
 
-    console.log('✅ Sab tables ready!');
+    console.log('✅ All tables ready!');
 
     // Admin user seeddata
     const [admins] = await db.query("SELECT id FROM users WHERE email = 'admin@fashionhub.com'");
