@@ -1,134 +1,142 @@
 <%- include('../partials/header') %>
 
 <div class="container my-4">
-
-  <h2 class="fw-bold mb-4">
-    <i class="fas fa-credit-card me-2"></i>
-    Checkout
-  </h2>
+  <h2 class="fw-bold mb-4"><i class="fas fa-credit-card me-2"></i>Checkout</h2>
 
   <div class="row g-4">
 
-    <!-- DELIVERY DETAILS -->
+    <!-- LEFT: DELIVERY + PAYMENT -->
     <div class="col-md-7">
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-dark text-white fw-bold">
-          Delivery Details
-        </div>
-        <div class="card-body">
 
-          <!-- ADDRESS FIELD (shared for both COD & Razorpay) -->
+      <!-- DELIVERY DETAILS -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-dark text-white fw-bold">Delivery Details</div>
+        <div class="card-body">
           <div class="mb-3">
             <label class="fw-bold">Delivery Address *</label>
-            <textarea
-              id="shipping_address"
-              name="shipping_address"
-              class="form-control"
-              rows="3"
-              required
-              placeholder="Enter your complete delivery address..."
-            ><%= profile.address || '' %></textarea>
+            <textarea id="shipping_address" class="form-control" rows="3" required placeholder="Complete delivery address..."><%= profile.address || '' %></textarea>
           </div>
+          <% if(estimatedDays) { %>
+            <div class="alert alert-success py-2">
+              <i class="fas fa-truck me-2"></i>Estimated delivery: <strong><%= estimatedDays %> business days</strong>
+            </div>
+          <% } %>
+        </div>
+      </div>
 
-          <!-- PAYMENT METHOD -->
-          <div class="mb-3">
-            <label class="fw-bold mb-2 d-block">Payment Method *</label>
-            <div class="d-flex gap-3 flex-wrap">
+      <!-- COUPON -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-tag me-2"></i>Coupon / Discount</div>
+        <div class="card-body">
+          <% if(firstOrderAmt > 0) { %>
+            <div class="alert alert-success py-2">
+              <i class="fas fa-gift me-2"></i>First Order Discount: <strong>₹<%= firstOrderAmt %></strong> automatically apply hogi!
+            </div>
+          <% } %>
+          <div class="input-group">
+            <input type="text" id="coupon_input" class="form-control text-uppercase" placeholder="Coupon code enter karein">
+            <button class="btn btn-dark fw-bold" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div id="coupon_msg" class="mt-2"></div>
+          <input type="hidden" id="coupon_code_final" value="">
+          <input type="hidden" id="coupon_discount" value="0">
+        </div>
+      </div>
 
-              <!-- COD -->
+      <!-- PAYMENT METHOD -->
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white fw-bold">Payment Method *</div>
+        <div class="card-body">
+          <div class="d-flex gap-4 flex-wrap mb-3">
+            <% if(codEnabled) { %>
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="payment_method" value="COD" id="cod" checked>
                 <label class="form-check-label fw-bold" for="cod">
-                  <i class="fas fa-money-bill-wave me-1 text-success"></i>
-                  Cash on Delivery
+                  <i class="fas fa-money-bill-wave me-1 text-success"></i>Cash on Delivery
                 </label>
               </div>
-
-              <!-- RAZORPAY -->
+            <% } %>
+            <% if(razorpayEnabled) { %>
               <div class="form-check">
-                <input class="form-check-input" type="radio" name="payment_method" value="Razorpay" id="razorpay">
-                <label class="form-check-label fw-bold" for="razorpay">
-                  <i class="fas fa-bolt me-1 text-primary"></i>
-                  UPI / Card / Net Banking
+                <input class="form-check-input" type="radio" name="payment_method" value="Razorpay" id="razorpay_opt" <%= !codEnabled ? 'checked' : '' %>>
+                <label class="form-check-label fw-bold" for="razorpay_opt">
+                  <i class="fas fa-bolt me-1 text-primary"></i>UPI / Card / Net Banking
                 </label>
               </div>
-
-            </div>
+            <% } %>
           </div>
 
-          <!-- INFO ALERT -->
-          <div class="alert alert-info" id="cod-info">
-            <i class="fas fa-info-circle me-2"></i>
-            Cash on Delivery: Payment delivery pe hogi.
+          <div id="cod-info" class="alert alert-info py-2 <%= !codEnabled ? 'd-none' : '' %>">
+            <i class="fas fa-info-circle me-2"></i>Payment delivery pe hogi.
           </div>
-          <div class="alert alert-primary d-none" id="razorpay-info">
-            <i class="fas fa-shield-alt me-2"></i>
-            UPI, Debit/Credit Card, Net Banking — Razorpay secure payment.
+          <div id="razorpay-info" class="alert alert-primary py-2 d-none">
+            <i class="fas fa-shield-alt me-2"></i>Secure payment via Razorpay.
           </div>
 
           <!-- COD FORM -->
-          <form id="cod-form" action="/orders/place" method="POST">
+          <form id="cod-form" action="/orders/place" method="POST" class="<%= !codEnabled ? 'd-none' : '' %>">
             <input type="hidden" name="payment_method" value="COD">
             <input type="hidden" name="shipping_address" id="cod-address">
-            <button type="submit" id="cod-btn" class="btn btn-warning w-100 py-3 fw-bold fs-5">
-              <i class="fas fa-check-circle me-2"></i>
-              Place Order (COD)
+            <input type="hidden" name="coupon_code" id="cod-coupon">
+            <button type="submit" class="btn btn-warning w-100 py-3 fw-bold fs-5">
+              <i class="fas fa-check-circle me-2"></i>Place Order (COD)
             </button>
           </form>
 
           <!-- RAZORPAY BUTTON -->
-          <button
-            id="razorpay-btn"
-            class="btn btn-primary w-100 py-3 fw-bold fs-5 d-none"
-            onclick="startRazorpayPayment()"
-          >
-            <i class="fas fa-bolt me-2"></i>
-            Pay Now with Razorpay
-          </button>
-
+          <% if(razorpayEnabled) { %>
+            <button id="razorpay-btn" class="btn btn-primary w-100 py-3 fw-bold fs-5 <%= codEnabled ? 'd-none' : '' %>"
+              onclick="startRazorpayPayment()">
+              <i class="fas fa-bolt me-2"></i>Pay Now with Razorpay
+            </button>
+          <% } %>
         </div>
       </div>
     </div>
 
-    <!-- ORDER SUMMARY -->
+    <!-- RIGHT: ORDER SUMMARY -->
     <div class="col-md-5">
       <div class="card shadow-sm border-0">
-        <div class="card-header bg-dark text-white fw-bold">
-          Order Summary
-        </div>
+        <div class="card-header bg-dark text-white fw-bold">Order Summary</div>
         <div class="card-body">
-
           <% items.forEach(item => { %>
             <div class="d-flex justify-content-between mb-2 align-items-center">
               <div class="d-flex align-items-center gap-2">
-                <img
-                  src="<%= item.image || '/images/default.jpg' %>"
-                  style="width:40px;height:40px;object-fit:cover;"
-                  class="rounded"
-                >
+                <img src="<%= item.image || '/images/default.jpg' %>" style="width:40px;height:40px;object-fit:cover;" class="rounded">
                 <div>
-                  <small class="fw-bold d-block" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                    <%= item.name %>
-                  </small>
+                  <small class="fw-bold d-block" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><%= item.name %></small>
                   <small class="text-muted">x<%= item.quantity %></small>
                 </div>
               </div>
               <span>₹<%= ((item.discount_price || item.price) * item.quantity).toFixed(2) %></span>
             </div>
           <% }) %>
-
           <hr>
-
           <div class="d-flex justify-content-between">
+            <span>Subtotal</span>
+            <span>₹<%= subtotal.toFixed(2) %></span>
+          </div>
+          <div class="d-flex justify-content-between mt-1">
             <span>Delivery</span>
-            <span class="text-success"><%= total >= 2 ? 'Free' : '₹50' %></span>
+            <span class="<%= deliveryCharge === 0 ? 'text-success' : '' %>">
+              <%= deliveryCharge === 0 ? 'Free' : '₹' + deliveryCharge %>
+            </span>
           </div>
-
-          <div class="d-flex justify-content-between fw-bold fs-5 mt-2">
+          <% if(firstOrderAmt > 0) { %>
+            <div class="d-flex justify-content-between mt-1 text-success">
+              <span>First Order Discount</span>
+              <span>- ₹<%= firstOrderAmt %></span>
+            </div>
+          <% } %>
+          <div class="d-flex justify-content-between text-danger fw-bold mt-1" id="coupon-row" style="display:none!important">
+            <span>Coupon Discount</span>
+            <span id="coupon-discount-display">- ₹0</span>
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between fw-bold fs-5">
             <span>Total</span>
-            <span class="text-danger">₹<%= (total + (total >= 2 ? 0 : 50)).toFixed(2) %></span>
+            <span class="text-danger" id="grand-total">₹<%= (subtotal + deliveryCharge - firstOrderAmt).toFixed(2) %></span>
           </div>
-
         </div>
       </div>
     </div>
@@ -136,128 +144,124 @@
   </div>
 </div>
 
-<!-- Razorpay SDK -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
 <script>
-  const RAZORPAY_KEY_ID = '<%= razorpayKeyId %>';
-  const TOTAL_AMOUNT = <%= (total + (total >= 2 ? 0 : 50)).toFixed(2) %>;
+const RAZORPAY_KEY_ID = '<%= razorpayKeyId %>';
+const SUBTOTAL = <%= subtotal %>;
+const DELIVERY = <%= deliveryCharge %>;
+const FIRST_DISC = <%= firstOrderAmt %>;
 
-  // Payment method toggle
-  document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-      const isCOD = this.value === 'COD';
-      document.getElementById('cod-form').classList.toggle('d-none', !isCOD);
-      document.getElementById('razorpay-btn').classList.toggle('d-none', isCOD);
-      document.getElementById('cod-info').classList.toggle('d-none', !isCOD);
-      document.getElementById('razorpay-info').classList.toggle('d-none', isCOD);
-    });
+// Payment method toggle
+document.querySelectorAll('input[name="payment_method"]').forEach(r => {
+  r.addEventListener('change', function() {
+    const isCOD = this.value === 'COD';
+    document.getElementById('cod-form').classList.toggle('d-none', !isCOD);
+    document.getElementById('razorpay-btn')?.classList.toggle('d-none', isCOD);
+    document.getElementById('cod-info').classList.toggle('d-none', !isCOD);
+    document.getElementById('razorpay-info').classList.toggle('d-none', isCOD);
   });
+});
 
-  // COD form pe address copy karein
-  document.getElementById('cod-form').addEventListener('submit', function(e) {
-    const addr = document.getElementById('shipping_address').value.trim();
-    if (!addr) {
-      e.preventDefault();
-      alert('Delivery address enter karein!');
-      document.getElementById('shipping_address').focus();
-      return;
-    }
-    document.getElementById('cod-address').value = addr;
+// COD address copy
+document.getElementById('cod-form')?.addEventListener('submit', function(e) {
+  const addr = document.getElementById('shipping_address').value.trim();
+  if (!addr) { e.preventDefault(); alert('Delivery address enter karein!'); return; }
+  document.getElementById('cod-address').value = addr;
+  document.getElementById('cod-coupon').value = document.getElementById('coupon_code_final').value;
+});
+
+// Coupon apply
+async function applyCoupon() {
+  const code = document.getElementById('coupon_input').value.trim().toUpperCase();
+  if (!code) return;
+  const res = await fetch('/orders/apply-coupon', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, subtotal: SUBTOTAL })
   });
-
-  // Razorpay payment
-  async function startRazorpayPayment() {
-    const address = document.getElementById('shipping_address').value.trim();
-    if (!address) {
-      alert('Delivery address enter karein!');
-      document.getElementById('shipping_address').focus();
-      return;
-    }
-
-    const btn = document.getElementById('razorpay-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...';
-
-    try {
-      // Backend se Razorpay order banao
-      const response = await fetch('/orders/razorpay/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shipping_address: address })
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        alert(data.message || 'Error aaya, dobara try karein');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-bolt me-2"></i> Pay Now with Razorpay';
-        return;
-      }
-
-      // Razorpay checkout open karein
-      const options = {
-        key: RAZORPAY_KEY_ID,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'FashionHub',
-        description: 'Order Payment',
-        order_id: data.razorpay_order_id,
-        prefill: {
-          name: data.user.name || '',
-          email: data.user.email || '',
-          contact: data.user.phone || ''
-        },
-        theme: { color: '#212529' },
-        handler: function(paymentResponse) {
-          // Payment successful - verify karein
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = '/orders/razorpay/verify';
-
-          const fields = {
-            razorpay_order_id: paymentResponse.razorpay_order_id,
-            razorpay_payment_id: paymentResponse.razorpay_payment_id,
-            razorpay_signature: paymentResponse.razorpay_signature,
-            order_db_id: data.order_db_id,
-            shipping_address: address
-          };
-
-          for (const [key, val] of Object.entries(fields)) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = val;
-            form.appendChild(input);
-          }
-
-          document.body.appendChild(form);
-          form.submit();
-        },
-        modal: {
-          ondismiss: function() {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-bolt me-2"></i> Pay Now with Razorpay';
-          }
-        }
-      };
-
-      const rzp = new Razorpay(options);
-      rzp.on('payment.failed', function(response) {
-        alert('Payment fail ho gayi: ' + response.error.description);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-bolt me-2"></i> Pay Now with Razorpay';
-      });
-      rzp.open();
-
-    } catch (err) {
-      console.error(err);
-      alert('Network error, dobara try karein');
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-bolt me-2"></i> Pay Now with Razorpay';
-    }
+  const data = await res.json();
+  const msgDiv = document.getElementById('coupon_msg');
+  if (data.success) {
+    msgDiv.innerHTML = `<div class="alert alert-success py-2">✅ Coupon applied! Discount: ₹${data.discount}</div>`;
+    document.getElementById('coupon_code_final').value = code;
+    document.getElementById('coupon_discount').value = data.discount;
+    document.getElementById('coupon-row').style.display = 'flex';
+    document.getElementById('coupon-discount-display').textContent = '- ₹' + data.discount;
+    updateTotal(data.discount);
+  } else {
+    msgDiv.innerHTML = `<div class="alert alert-danger py-2">❌ ${data.message}</div>`;
+    document.getElementById('coupon_code_final').value = '';
+    document.getElementById('coupon_discount').value = 0;
+    document.getElementById('coupon-row').style.display = 'none';
+    updateTotal(0);
   }
+}
+
+function updateTotal(couponDisc) {
+  const total = Math.max(0, SUBTOTAL + DELIVERY - FIRST_DISC - couponDisc);
+  document.getElementById('grand-total').textContent = '₹' + total.toFixed(2);
+}
+
+// Razorpay
+async function startRazorpayPayment() {
+  const address = document.getElementById('shipping_address').value.trim();
+  if (!address) { alert('Delivery address enter karein!'); return; }
+  const btn = document.getElementById('razorpay-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+  try {
+    const response = await fetch('/orders/razorpay/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        shipping_address: address,
+        coupon_code: document.getElementById('coupon_code_final').value
+      })
+    });
+    const data = await response.json();
+    if (!data.success) {
+      alert(data.message || 'Error aaya');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-bolt me-2"></i>Pay Now with Razorpay';
+      return;
+    }
+    const rzp = new Razorpay({
+      key: RAZORPAY_KEY_ID,
+      amount: data.amount,
+      currency: data.currency,
+      name: 'FashionHub',
+      description: 'Order Payment',
+      order_id: data.razorpay_order_id,
+      prefill: { name: data.user?.name||'', email: data.user?.email||'', contact: data.user?.phone||'' },
+      theme: { color: '#212529' },
+      handler: function(pr) {
+        const form = document.createElement('form');
+        form.method = 'POST'; form.action = '/orders/razorpay/verify';
+        const fields = {
+          razorpay_order_id: pr.razorpay_order_id,
+          razorpay_payment_id: pr.razorpay_payment_id,
+          razorpay_signature: pr.razorpay_signature,
+          order_db_id: data.order_db_id,
+          coupon_id: data.coupon_id || ''
+        };
+        for (const [k,v] of Object.entries(fields)) {
+          const i = document.createElement('input');
+          i.type='hidden'; i.name=k; i.value=v;
+          form.appendChild(i);
+        }
+        document.body.appendChild(form); form.submit();
+      },
+      modal: { ondismiss: () => { btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt me-2"></i>Pay Now with Razorpay'; } }
+    });
+    rzp.on('payment.failed', r => {
+      alert('Payment fail: ' + r.error.description);
+      btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt me-2"></i>Pay Now with Razorpay';
+    });
+    rzp.open();
+  } catch(err) {
+    alert('Network error'); btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt me-2"></i>Pay Now with Razorpay';
+  }
+}
 </script>
 
 <%- include('../partials/footer') %>

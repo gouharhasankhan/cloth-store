@@ -1,263 +1,106 @@
-
 <%- include('../partials/header') %>
 
 <div class="container my-4">
-
   <div class="row g-4">
 
     <!-- PROFILE CARD -->
-
     <div class="col-md-4">
-
       <div class="card shadow-sm text-center border-0">
-
         <div class="card-body py-4">
-
-          <!-- USER AVATAR -->
-
-          <div
-            class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-            style="width:80px; height:80px;"
-          >
-
+          <div class="bg-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:80px;height:80px;">
             <i class="fas fa-user fa-2x text-dark"></i>
-
           </div>
-
-          <!-- USER INFO -->
-
-          <h4 class="fw-bold">
-
-            <%= profile.name %>
-
-          </h4>
-
-          <p class="text-muted">
-
-            <%= profile.email %>
-
-          </p>
-
-          <span class="badge bg-dark">
-
-            <%= profile.role.toUpperCase() %>
-
-          </span>
-
+          <h4 class="fw-bold"><%= profile.name %></h4>
+          <p class="text-muted"><%= profile.email %></p>
+          <span class="badge bg-dark"><%= profile.role.toUpperCase() %></span>
         </div>
-
       </div>
 
+      <!-- QUICK LINKS -->
+      <div class="card shadow-sm border-0 mt-3">
+        <div class="card-body">
+          <a href="/orders" class="btn btn-outline-dark w-100 mb-2"><i class="fas fa-box me-2"></i>My Orders</a>
+          <a href="/cart" class="btn btn-outline-warning w-100"><i class="fas fa-shopping-cart me-2"></i>My Cart</a>
+        </div>
+      </div>
     </div>
-
-    <!-- PROFILE UPDATE -->
 
     <div class="col-md-8">
 
-      <div class="card shadow-sm border-0">
-
-        <div class="card-header bg-dark text-white fw-bold">
-
-          Update Profile
-
-        </div>
-
+      <!-- UPDATE PROFILE -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white fw-bold">Update Profile</div>
         <div class="card-body">
-
           <form action="/auth/profile" method="POST">
-
-            <!-- NAME -->
-
             <div class="mb-3">
-
-              <label class="fw-bold">
-
-                Full Name
-
-              </label>
-
-              <input
-                type="text"
-                name="name"
-                class="form-control"
-                value="<%= profile.name %>"
-                required
-              >
-
+              <label class="fw-bold">Full Name</label>
+              <input type="text" name="name" class="form-control" value="<%= profile.name %>" required>
             </div>
-
-            <!-- PHONE -->
-
             <div class="mb-3">
-
-              <label class="fw-bold">
-
-                Phone Number
-
-              </label>
-
-              <input
-                type="text"
-                name="phone"
-                class="form-control"
-                value="<%= profile.phone || '' %>"
-              >
-
+              <label class="fw-bold">Phone Number</label>
+              <input type="text" name="phone" class="form-control" value="<%= profile.phone || '' %>">
             </div>
-
-            <!-- ADDRESS -->
-
             <div class="mb-3">
-
-              <label class="fw-bold">
-
-                Default Address
-
-              </label>
-
-              <textarea
-                name="address"
-                class="form-control"
-                rows="3"
-              ><%= profile.address || '' %></textarea>
-
+              <label class="fw-bold">Default Delivery Address</label>
+              <textarea name="address" class="form-control" rows="3"><%= profile.address || '' %></textarea>
             </div>
-
-            <!-- BUTTON -->
-
-            <button
-              type="submit"
-              class="btn btn-warning fw-bold"
-            >
-
-              Save Profile
-
-            </button>
-
+            <button type="submit" class="btn btn-warning fw-bold">Save Profile</button>
           </form>
-
         </div>
+      </div>
 
+      <!-- CHANGE PASSWORD -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-lock me-2"></i>Change Password</div>
+        <div class="card-body">
+          <form action="/auth/change-password" method="POST">
+            <div class="mb-3">
+              <label class="fw-bold">Current Password</label>
+              <input type="password" name="current_password" class="form-control" required placeholder="Apna purana password">
+            </div>
+            <div class="mb-3">
+              <label class="fw-bold">New Password</label>
+              <input type="password" name="new_password" class="form-control" required placeholder="Naya password (min 6 characters)">
+            </div>
+            <div class="mb-3">
+              <label class="fw-bold">Confirm New Password</label>
+              <input type="password" name="confirm_password" class="form-control" required placeholder="Naya password dobara likhein">
+            </div>
+            <button type="submit" class="btn btn-dark fw-bold"><i class="fas fa-key me-2"></i>Change Password</button>
+          </form>
+        </div>
       </div>
 
     </div>
-
   </div>
 
   <!-- RECENT ORDERS -->
-
-  <div class="mt-4">
-
-    <h5 class="fw-bold">
-
-      Recent Orders
-
-    </h5>
-
+  <div class="mt-2">
+    <h5 class="fw-bold">Recent Orders</h5>
     <% if (orders.length === 0) { %>
-
-      <!-- NO ORDERS -->
-
-      <p class="text-muted">
-
-        No orders found yet.
-
-        <a href="/products">
-
-          Start shopping!
-
-        </a>
-
-      </p>
-
+      <p class="text-muted">No orders found. <a href="/products">Start shopping!</a></p>
     <% } else { %>
-
-      <!-- ORDERS TABLE -->
-
       <div class="table-responsive">
-
         <table class="table shadow-sm">
-
           <thead class="table-dark">
-
-            <tr>
-
-              <th>Order ID</th>
-
-              <th>Amount</th>
-
-              <th>Status</th>
-
-              <th>Date</th>
-
-              <th>View</th>
-
-            </tr>
-
+            <tr><th>Order ID</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>View</th></tr>
           </thead>
-
           <tbody>
-
             <% orders.slice(0,5).forEach(o => { %>
-
               <tr>
-
-                <td>
-
-                  #<%= o.id %>
-
-                </td>
-
-                <td>
-
-                  ₹<%= o.total_amount %>
-
-                </td>
-
-                <td>
-
-                  <span class="badge bg-warning text-dark">
-
-                    <%= o.status %>
-
-                  </span>
-
-                </td>
-
-                <td>
-
-                  <%= new Date(o.created_at).toLocaleDateString('en-IN') %>
-
-                </td>
-
-                <td>
-
-                  <a
-                    href="/orders/<%= o.id %>"
-                    class="btn btn-sm btn-dark"
-                  >
-
-                    View
-
-                  </a>
-
-                </td>
-
+                <td>#<%= o.id %></td>
+                <td>₹<%= o.total_amount %></td>
+                <td><span class="badge bg-secondary"><%= o.payment_method %></span></td>
+                <td><span class="badge bg-warning text-dark"><%= o.status %></span></td>
+                <td><%= new Date(o.created_at).toLocaleDateString('en-IN') %></td>
+                <td><a href="/orders/<%= o.id %>" class="btn btn-sm btn-dark">View</a></td>
               </tr>
-
             <% }) %>
-
           </tbody>
-
         </table>
-
       </div>
-
     <% } %>
-
   </div>
-
 </div>
 
 <%- include('../partials/footer') %>
-

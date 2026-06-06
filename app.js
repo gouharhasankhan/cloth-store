@@ -70,11 +70,29 @@ app.use(flash());
 // ========================
 // GLOBAL VARIABLES
 // ========================
-app.use((req, res, next) => {
+const db = require('./config/db');
+app.use(async (req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   res.locals.user = req.session.user || null;
   res.locals.appName = process.env.APP_NAME || 'FashionHub';
+  try {
+    res.locals.bannerEnabled = (await db.getSetting('banner_enabled')) === '1';
+    res.locals.bannerText = await db.getSetting('banner_text') || '';
+    res.locals.bannerColor = await db.getSetting('banner_color') || 'warning';
+    res.locals.maintenanceMode = (await db.getSetting('maintenance_mode')) === '1';
+    res.locals.siteName = await db.getSetting('site_name') || 'FashionHub';
+  } catch(e) {
+    res.locals.bannerEnabled = false;
+    res.locals.bannerText = '';
+    res.locals.bannerColor = 'warning';
+    res.locals.maintenanceMode = false;
+    res.locals.siteName = 'FashionHub';
+  }
+  // Maintenance mode check (admin bypass)
+  if (res.locals.maintenanceMode && req.session.user?.role !== 'admin' && !req.path.startsWith('/auth')) {
+    return res.status(503).render('maintenance', { title: 'Site Under Maintenance' });
+  }
   next();
 });
 

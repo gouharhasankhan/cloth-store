@@ -1,0 +1,178 @@
+<%- include('./sidebar') %>
+<div class="container-fluid py-4">
+  <h3 class="fw-bold mb-4"><i class="fas fa-cog me-2"></i>Store Settings</h3>
+
+  <form action="/admin/settings" method="POST">
+
+    <!-- ORDER & PAYMENT -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-shopping-cart me-2"></i>Order & Payment Settings</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="fw-bold">Delivery Charge (₹)</label>
+            <input type="number" name="delivery_charge" class="form-control" value="<%= settings.delivery_charge %>" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold">Free Delivery Above (₹)</label>
+            <input type="number" name="free_delivery_above" class="form-control" value="<%= settings.free_delivery_above %>" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold">Minimum Order Amount (₹)</label>
+            <input type="number" name="min_order_amount" class="form-control" value="<%= settings.min_order_amount %>" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold">Max Items Per Order</label>
+            <input type="number" name="max_items_per_order" class="form-control" value="<%= settings.max_items_per_order %>" min="1">
+          </div>
+          <div class="col-md-4 d-flex align-items-end gap-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="cod_enabled" id="cod_enabled" <%= settings.cod_enabled === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold" for="cod_enabled">COD Enabled</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="razorpay_enabled" id="razorpay_enabled" <%= settings.razorpay_enabled === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold" for="razorpay_enabled">Razorpay Enabled</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COUPON / DISCOUNT -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-tag me-2"></i>First Order Discount</div>
+      <div class="card-body">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-3">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="first_order_discount" id="first_order_discount" <%= settings.first_order_discount === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold" for="first_order_discount">First Order Discount Enable</label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="fw-bold">Discount Amount (₹)</label>
+            <input type="number" name="first_order_discount_value" class="form-control" value="<%= settings.first_order_discount_value %>" min="0">
+          </div>
+        </div>
+        <small class="text-muted">Pehli baar order karne wale users ko automatically ye discount milega (bina coupon ke)</small>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-boxes me-2"></i>Inventory Settings</div>
+      <div class="card-body">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-4">
+            <label class="fw-bold">Low Stock Alert (items)</label>
+            <input type="number" name="low_stock_threshold" class="form-control" value="<%= settings.low_stock_threshold %>" min="1">
+            <small class="text-muted">Itne ya kam stock pe dashboard alert dikhega</small>
+          </div>
+          <div class="col-md-4 d-flex align-items-end gap-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="hide_out_of_stock" id="hide_out_of_stock" <%= settings.hide_out_of_stock === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold" for="hide_out_of_stock">Out of Stock Products Hide Karein</label>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" name="allow_reviews" id="allow_reviews" <%= settings.allow_reviews === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold" for="allow_reviews">Product Reviews Allow Karein</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENT BANNER -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-bullhorn me-2"></i>Homepage Announcement Banner</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-2">
+            <div class="form-check form-switch mt-4">
+              <input class="form-check-input" type="checkbox" name="banner_enabled" id="banner_enabled" <%= settings.banner_enabled === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold" for="banner_enabled">Banner ON</label>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <label class="fw-bold">Banner Text</label>
+            <input type="text" name="banner_text" class="form-control" value="<%= settings.banner_text %>">
+          </div>
+          <div class="col-md-3">
+            <label class="fw-bold">Banner Color</label>
+            <select name="banner_color" class="form-select">
+              <option value="warning" <%= settings.banner_color === 'warning' ? 'selected' : '' %>>Yellow (Warning)</option>
+              <option value="success" <%= settings.banner_color === 'success' ? 'selected' : '' %>>Green (Success)</option>
+              <option value="danger" <%= settings.banner_color === 'danger' ? 'selected' : '' %>>Red (Sale)</option>
+              <option value="info" <%= settings.banner_color === 'info' ? 'selected' : '' %>>Blue (Info)</option>
+              <option value="dark" <%= settings.banner_color === 'dark' ? 'selected' : '' %>>Dark</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELIVERY -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-truck me-2"></i>Delivery Settings</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="fw-bold">Estimated Delivery Days</label>
+            <input type="text" name="estimated_delivery_days" class="form-control" value="<%= settings.estimated_delivery_days %>" placeholder="e.g. 3-5">
+          </div>
+          <div class="col-md-8">
+            <label class="fw-bold">COD Available Cities/Pincodes <small class="text-muted">(comma separated, blank = sab jagah)</small></label>
+            <input type="text" name="cod_cities" class="form-control" value="<%= settings.cod_cities %>" placeholder="Delhi, Mumbai, 110001, 400001">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITE SETTINGS -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-globe me-2"></i>Site Settings</div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="fw-bold">Site Name</label>
+            <input type="text" name="site_name" class="form-control" value="<%= settings.site_name %>">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold">Tagline</label>
+            <input type="text" name="site_tagline" class="form-control" value="<%= settings.site_tagline %>">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold">Contact Phone</label>
+            <input type="text" name="contact_phone" class="form-control" value="<%= settings.contact_phone %>">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold">Contact Email</label>
+            <input type="email" name="contact_email" class="form-control" value="<%= settings.contact_email %>">
+          </div>
+          <div class="col-md-8">
+            <label class="fw-bold">Contact Address</label>
+            <input type="text" name="contact_address" class="form-control" value="<%= settings.contact_address %>">
+          </div>
+          <div class="col-md-4">
+            <div class="form-check form-switch mt-4">
+              <input class="form-check-input" type="checkbox" name="maintenance_mode" id="maintenance_mode" <%= settings.maintenance_mode === '1' ? 'checked' : '' %>>
+              <label class="form-check-label fw-bold text-danger" for="maintenance_mode">⚠️ Maintenance Mode</label>
+            </div>
+            <small class="text-muted">ON karne par site visitors ko maintenance page dikhega</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-warning fw-bold px-5 py-2 fs-5">
+      <i class="fas fa-save me-2"></i>Save All Settings
+    </button>
+  </form>
+</div>
+    </div>
+  </div>
+</div>
+<%- include("../partials/footer") %>

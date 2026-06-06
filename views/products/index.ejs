@@ -1,13 +1,94 @@
 
 <%- include('../partials/header') %>
+<style>
+  /* FILTER CARD */
 
+.card{
+    border-radius:20px;
+}
+
+.card-header{
+    border:none;
+}
+
+.list-group-item{
+    border:none;
+    border-radius:12px !important;
+    margin-bottom:6px;
+    transition:.3s;
+}
+
+.list-group-item:hover{
+    background:#f8f9fa;
+    transform:translateX(5px);
+}
+
+.list-group-item.active{
+    background:#111 !important;
+    border-color:#111 !important;
+}
+
+/* PRODUCT CARD */
+
+.product-card{
+    border-radius:20px;
+    overflow:hidden;
+    transition:.35s;
+}
+
+.product-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 35px rgba(0,0,0,.15)!important;
+}
+
+.product-card img{
+    transition:.5s;
+}
+
+.product-card:hover img{
+    transform:scale(1.05);
+}
+
+/* OFFCANVAS */
+
+.offcanvas{
+    width:320px !important;
+}
+
+.offcanvas-header{
+    background:#111;
+    color:#fff;
+}
+
+.offcanvas-title{
+    color:#fff;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .container{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .product-card img{
+        height:190px !important;
+    }
+
+    .btn-dark{
+        border-radius:12px;
+    }
+}
+</style>
 <div class="container my-4">
 
   <div class="row g-4">
 
     <!-- FILTER SIDEBAR -->
 
-    <div class="col-md-3">
+  <div class="col-md-3 d-none d-md-block">
 
       <div class="card shadow-sm border-0">
 
@@ -198,20 +279,34 @@
     <div class="col-md-9">
 
       <!-- TOP BAR -->
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-      <div class="d-flex justify-content-between align-items-center mb-3">
-
-        <h4 class="fw-bold mb-0">
-
-          Products
-
-          <span class="badge bg-dark ms-1">
-
+    <h4 class="fw-bold mb-0">
+        Products
+        <span class="badge bg-dark ms-1">
             <%= products.length %>
+        </span>
+    </h4>
 
-          </span>
+    <button class="btn btn-dark d-md-none"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#filterDrawer">
 
-        </h4>
+        <i class="fas fa-sliders-h me-2"></i>
+        Filters
+
+    </button>
+
+</div>
+
+<% if (filters.search) { %>
+
+<div class="alert alert-light border mb-4">
+    Search Results for:
+    <strong><%= filters.search %></strong>
+</div>
+
+<% } %>
 
         <!-- SEARCH -->
 
@@ -226,7 +321,6 @@
 
         <% } %>
 
-      </div>
 
       <!-- EMPTY -->
 
@@ -384,7 +478,133 @@
     </div>
 
   </div>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="filterDrawer">
 
+    <div class="offcanvas-header border-bottom">
+
+        <h5 class="offcanvas-title fw-bold">
+            <i class="fas fa-filter me-2"></i>
+            Filters
+        </h5>
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas">
+        </button>
+
+    </div>
+
+    <div class="offcanvas-body">
+
+        <form method="GET" action="/products">
+
+            <div class="mb-4">
+
+                <label class="fw-bold mb-2">
+                    Category
+                </label>
+
+                <select
+                    name="category"
+                    class="form-select">
+
+                    <option value="">
+                        All Products
+                    </option>
+
+                    <% categories.forEach(cat => { %>
+
+                        <option
+                            value="<%= cat.slug %>"
+                            <%= filters.category === cat.slug ? 'selected' : '' %>>
+                            <%= cat.name %>
+                        </option>
+
+                    <% }) %>
+
+                </select>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="fw-bold mb-2">
+                    Price Range
+                </label>
+
+                <input
+                    type="number"
+                    name="minPrice"
+                    class="form-control mb-2"
+                    placeholder="Min Price"
+                    value="<%= filters.minPrice || '' %>">
+
+                <input
+                    type="number"
+                    name="maxPrice"
+                    class="form-control"
+                    placeholder="Max Price"
+                    value="<%= filters.maxPrice || '' %>">
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="fw-bold mb-2">
+                    Sort By
+                </label>
+
+                <select
+                    name="sort"
+                    class="form-select">
+
+                    <option value="">
+                        Default
+                    </option>
+
+                    <option
+                        value="price_low"
+                        <%= filters.sort === 'price_low' ? 'selected' : '' %>>
+                        Price Low → High
+                    </option>
+
+                    <option
+                        value="price_high"
+                        <%= filters.sort === 'price_high' ? 'selected' : '' %>>
+                        Price High → Low
+                    </option>
+
+                    <option
+                        value="newest"
+                        <%= filters.sort === 'newest' ? 'selected' : '' %>>
+                        Newest First
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                class="btn btn-dark w-100">
+
+                Apply Filters
+
+            </button>
+
+            <a
+                href="/products"
+                class="btn btn-outline-secondary w-100 mt-2">
+
+                Reset
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
 </div>
 
 <%- include('../partials/footer') %>
